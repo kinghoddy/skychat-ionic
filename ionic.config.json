@@ -1,0 +1,7 @@
+{
+  "name": "skyChat",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
