@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "795125035544",
+    "firebase_url": "https://skymail-920ab.firebaseio.com",
+    "project_id": "skymail-920ab",
+    "storage_bucket": "skymail-920ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:795125035544:android:78c4e0dede09d0cedd496d",
+        "android_client_info": {
+          "package_name": "com.kinghoddy.skychat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "795125035544-r52qmsadpkvlpoon8vgnjuujvi88f64g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKhKXSpx_FPUb4kpuA4UvkMf_Tz36yCfE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "795125035544-r52qmsadpkvlpoon8vgnjuujvi88f64g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

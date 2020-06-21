@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">skychat</string>
+    <string name="title_activity_main">skychat</string>
+    <string name="package_name">com.kinghoddy.skychat</string>
+    <string name="custom_url_scheme">com.kinghoddy.skychat</string>
+</resources>

@@ -1,0 +1,18 @@
+.logo {
+  height: 20px;
+  margin-top: auto;
+}
+.wrapper {
+  display: flex;
+  min-height: 100%;
+  align-items: center;
+  padding: 30px 10px;
+  flex-direction: column;
+}
+.error {
+  background: rgba(255, 0, 0, 0.1);
+  color: #a23;
+  font-size: 12px;
+  padding: 10px;
+  text-align: left;
+}

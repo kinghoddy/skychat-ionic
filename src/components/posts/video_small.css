@@ -1,0 +1,15 @@
+.video_container {
+  position: relative;
+}
+.video_container .controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.video_container .controls ion-icon {
+  color: white;
+}

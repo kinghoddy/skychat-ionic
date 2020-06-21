@@ -1,0 +1,21 @@
+ion-slides {
+  height: 100%;
+}
+
+.swiper-slide {
+  display: block;
+}
+
+.home_panel {
+  height: 35vh;
+  padding: 10px;
+}
+
+.home_banner {
+  height: 65vh;
+}
+.home_banner > img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}

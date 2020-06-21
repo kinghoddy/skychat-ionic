@@ -1,0 +1,52 @@
+body {
+  margin: 0;
+  font-family: "Source Sans Pro", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+p {
+  font-family: "Source Sans Pro", sans-serif;
+}
+::-webkit-scrollbar {
+  width: 0.1rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(133, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(92, 0, 0, 0.5);
+}
+
+h5,
+h4 {
+  font-family: "Montserrat Alternates", sans-serif;
+  font-weight: 700;
+}
+
+h3,
+h2 {
+  text-transform: capitalize;
+  font-family: "Architects Daughter", cursive;
+  font-weight: bolder;
+}
+
+h1 {
+  font-family: "Gochi Hand", cursive;
+  font-size: 38px;
+}
+
+::selection {
+  background: orangered;
+  color: white;
+}
+*,
+*::before,
+*::after {
+  transition: background 0.3s, color 0.3s;
+}
+a {
+  text-decoration: none;
+}

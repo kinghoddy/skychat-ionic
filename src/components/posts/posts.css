@@ -1,0 +1,63 @@
+.post {
+  margin-bottom: 10px;
+  background: var(--ion-background-color, #fff);
+}
+.post ion-item::part(native) {
+  background: none;
+}
+.post ion-item ion-avatar,
+.post ion-item ion-label {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+body.dark .post {
+  background: var(--ion-background-color, #1e1e1e);
+}
+
+.post_media {
+  background: var(--ion-color-light);
+  min-height: 130px;
+}
+
+.post_media ion-img::part(image),
+.post_media video {
+  border: 0;
+  max-height: 60vh;
+  display: block;
+  width: 100%;
+  object-position: center;
+  object-fit: cover;
+}
+
+.post_media video {
+  object-fit: cover;
+  background: black;
+}
+.post_media .playing {
+  object-fit: contain;
+}
+.text-medium {
+  color: var(--ion-color-medium);
+  font-weight: light;
+}
+
+.post_title {
+  margin: 0;
+  padding: 0 10px 10px 10px;
+}
+.post_body {
+  margin: 0;
+  padding: 0 10px 10px 10px;
+}
+.post_info {
+  padding: 0 10px 5px 5px;
+  display: flex;
+  justify-content: space-between;
+}
+.post_info span {
+  font-size: 11px;
+  color: var(--ion-color-dark);
+}
+.px-1 {
+  padding: 0 3px;
+}
