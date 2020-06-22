@@ -23,7 +23,10 @@ class VidSmall extends React.Component<any> {
     }
   };
   muteUnmute = () => {
-    if (this.Vid.current?.muted) {
+    if (this.Vid.current!.muted) {
+      this.Vid.current!.volume = 1;
+    } else {
+      this.Vid.current!.volume = 0;
     }
   };
   render() {
