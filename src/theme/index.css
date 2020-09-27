@@ -2,6 +2,7 @@ body {
   margin: 0;
   font-family: "Source Sans Pro", sans-serif;
   -webkit-font-smoothing: antialiased;
+  background: var(--ion-color-light);
   -moz-osx-font-smoothing: grayscale;
 }
 

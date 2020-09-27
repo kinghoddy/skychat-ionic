@@ -1,5 +1,12 @@
 import React from "react";
-import { IonPage, IonContent, IonSpinner } from "@ionic/react";
+import {
+  IonPage,
+  IonContent,
+  IonSpinner,
+  IonRefresher,
+  IonRefresherContent,
+} from "@ionic/react";
+import { RefresherEventDetail } from "@ionic/core";
 import Toolbar from "../../components/toolbar/toolbar";
 import Post from "../../components/posts/posts";
 import firebase from "../../firebaseConfig";
@@ -10,21 +17,31 @@ class Feed extends React.Component<any> {
     posts: [],
     fired: false,
     loadCount: 5,
+    update: false,
     loading: false,
   };
   componentDidUpdate() {
     if (this.props.shouldLoad && !this.state.fired) {
       this.setState({ fired: true });
-      this.getPosts();
+      this.getPosts(undefined);
     }
   }
+
   componentDidMount() {
     const initPosts: any = localStorage.getItem("skychatFeed");
     if (initPosts) {
       this.setState({ posts: JSON.parse(initPosts) });
     }
   }
-  getPosts = () => {
+  upDateFeed = (friendsArr: any[]) => {
+    const feeds = firebase.database().ref("posts");
+    feeds.limitToLast(1).on("child_added", (s) => {
+      if (friendsArr.indexOf(s.val().uid) > -1) {
+        this.setState({ update: true });
+      }
+    });
+  };
+  getPosts = (event: CustomEvent<RefresherEventDetail> | undefined) => {
     console.log("getposts");
     this.setState({ loading: true });
     const ref = firebase.database().ref("users/");
@@ -34,12 +51,14 @@ class Feed extends React.Component<any> {
       for (let key in friendsId) {
         friendsArr.push(friendsId[key]);
       }
+      this.upDateFeed(friendsArr);
       const feedRef = firebase.database().ref("posts/");
       let Posts: any[] = [];
       friendsArr.forEach((cur, i) => {
         feedRef
           .orderByChild("uid")
           .equalTo(cur)
+          .limitToLast(100)
           .once("value", (s) => {
             for (let key in s.val()) {
               let post = {
@@ -52,9 +71,14 @@ class Feed extends React.Component<any> {
                 JSON.stringify(Posts.reverse())
               );
             }
-            if (friendsArr.length - 1 === i) {
+            if (friendsArr.length - 1 >= i) {
               setTimeout(() => {
-                this.setState({ posts: Posts.reverse(), loading: false });
+                event?.detail.complete();
+                this.setState({
+                  posts: Posts.reverse(),
+                  updated: false,
+                  loading: false,
+                });
               }, 1000);
             }
           });
@@ -101,6 +125,9 @@ class Feed extends React.Component<any> {
             this.scrolled();
           }}
         >
+          <IonRefresher slot="fixed" onIonRefresh={this.getPosts}>
+            <IonRefresherContent></IonRefresherContent>
+          </IonRefresher>
           <div className="feed">
             {this.state.posts.map(
               (cur: any, i: number) =>
