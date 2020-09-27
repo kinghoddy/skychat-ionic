@@ -29,6 +29,7 @@ import "firebase/auth";
 import "firebase/database";
 import firebase from "../../firebaseConfig";
 import { GooglePlus } from "@ionic-native/google-plus";
+import { StatusBar } from "@ionic-native/status-bar";
 class Login extends Component<any> {
   state = {
     formData: {
@@ -151,6 +152,8 @@ class Login extends Component<any> {
   };
 
   componentDidMount() {
+    StatusBar.backgroundColorByHexString("#f43");
+
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.setState({

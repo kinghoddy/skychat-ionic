@@ -12,6 +12,7 @@ import Post from "../../components/posts/posts";
 import firebase from "../../firebaseConfig";
 import "firebase/database";
 import "./feed.css";
+import { StatusBar } from "@ionic-native/status-bar";
 class Feed extends React.Component<any> {
   state = {
     posts: [],
@@ -28,6 +29,8 @@ class Feed extends React.Component<any> {
   }
 
   componentDidMount() {
+    StatusBar.backgroundColorByHexString("#fff");
+
     const initPosts: any = localStorage.getItem("skychatFeed");
     if (initPosts) {
       this.setState({ posts: JSON.parse(initPosts) });
