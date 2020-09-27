@@ -175,10 +175,10 @@ class Login extends Component<any> {
     return (
       <IonPage className="bg">
         <IonToolbar color="none">
-          <IonButtons slot="start" color="light">
+          <IonButtons slot="start" style={{ color: "#fff" }}>
             <IonBackButton defaultHref="/home" />
           </IonButtons>
-          <IonTitle color="light">Login</IonTitle>
+          <IonTitle style={{ color: "#fff" }}>Login</IonTitle>
         </IonToolbar>
         <IonContent>
           <div className="wrapper">

@@ -31,6 +31,7 @@ import "firebase/auth";
 import "firebase/database";
 import firebase from "../../firebaseConfig";
 import { GooglePlus } from "@ionic-native/google-plus";
+import { StatusBar } from "@ionic-native/status-bar";
 
 class SignUp extends Component<any> {
   state = {
@@ -72,21 +73,8 @@ class SignUp extends Component<any> {
                   this.setState({
                     loading: false,
                     userExist: true,
-                    errorMessage: (
-                      <div>
-                        <img
-                          src={s.val()[id].profilePicture}
-                          style={{ height: "50px", width: "50px" }}
-                          className="rounded-circle"
-                          alt=""
-                        />
-                        User {s.val()[id].username} already exists. You can
-                        <Link to="/feed">
-                          <a> Login </a>
-                        </Link>
-                        to continue
-                      </div>
-                    ),
+                    errorMessage:
+                      "This gmail account has been used by another user",
                   });
                 } else {
                   this.setState({ loading: false });
@@ -110,7 +98,9 @@ class SignUp extends Component<any> {
         });
       });
   };
-
+  componentDidMount() {
+    StatusBar.backgroundColorByHexString("#f43");
+  }
   saveUser = (e: any) => {
     e.preventDefault();
     // this.setUserName(this.state.formData.username);
@@ -226,10 +216,10 @@ class SignUp extends Component<any> {
     return (
       <IonPage className="bg">
         <IonToolbar color="none">
-          <IonButtons slot="start">
+          <IonButtons slot="start" style={{ color: "#fff" }}>
             <IonBackButton defaultHref="/home" />
           </IonButtons>
-          <IonTitle>Sign up</IonTitle>
+          <IonTitle style={{ color: "#fff" }}>Sign up</IonTitle>
         </IonToolbar>
         <IonContent>
           <div className="wrapper">
