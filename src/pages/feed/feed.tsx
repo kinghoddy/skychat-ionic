@@ -61,6 +61,7 @@ class Feed extends React.Component<any> {
       });
     });
   };
+
   loadMore = (e: any) => {
     let count = this.state.loadCount;
     count += 10;
@@ -68,6 +69,21 @@ class Feed extends React.Component<any> {
     if (watch?.getBoundingClientRect().top < window.innerHeight) {
       this.setState({ loadCount: count });
     }
+  };
+  scrolled = () => {
+    let vidArr = Array.from(
+      document.querySelectorAll<HTMLVideoElement>(".video_container video")
+    );
+    vidArr.forEach((videos) => {
+      if (
+        videos.getBoundingClientRect().top <= 300 &&
+        videos.getBoundingClientRect().top > 0
+      ) {
+        videos.play();
+      } else {
+        videos.pause();
+      }
+    });
   };
   render() {
     let posts: any[] = this.state.posts;
@@ -80,7 +96,10 @@ class Feed extends React.Component<any> {
         <IonContent
           forceOverscroll={true}
           scrollEvents={true}
-          onIonScroll={this.loadMore}
+          onIonScroll={(e) => {
+            this.loadMore(e);
+            this.scrolled();
+          }}
         >
           <div className="feed">
             {this.state.posts.map(

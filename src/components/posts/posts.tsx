@@ -155,7 +155,7 @@ class APost extends React.Component<any> {
       .ref("posts/" + this.props.id)
       .once("value", (s) => {
         let post = { ...this.state.post };
-        for (let keys in s.val()) {
+        for (let keys in post) {
           post[keys] = s.val()[keys];
         }
         post.body = formatLink(s.val().body);

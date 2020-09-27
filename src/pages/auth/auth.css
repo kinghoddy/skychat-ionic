@@ -6,10 +6,30 @@
   display: flex;
   min-height: 100%;
   align-items: center;
-  padding: 30px 10px;
+  padding: 30px 20px;
+  color: #fff;
   flex-direction: column;
 }
-.error {
+.bg ion-content {
+  --background: none;
+}
+.bg {
+  background: linear-gradient(to right, #f66e, #f53e),
+    url(/assets/slides/4.jpg) center;
+  background-size: cover;
+}
+.headText {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.bg ion-item {
+  --background: #fff4;
+  --color: #fff;
+  --border-color: #fa0;
+  --highlight-color-focused: #fc5;
+}
+
+i .error {
   background: rgba(255, 0, 0, 0.1);
   color: #a23;
   font-size: 12px;

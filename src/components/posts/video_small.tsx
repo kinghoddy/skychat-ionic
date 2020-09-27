@@ -13,6 +13,27 @@ class VidSmall extends React.Component<any> {
     play: false,
     mute: false,
   };
+  componentDidUpdate() {}
+  componentDidMount() {
+    let videos = this.Vid.current!;
+    videos.addEventListener("play", (e: any) => {
+      this.setState({ play: true });
+    });
+    videos.addEventListener("pause", (e: any) => {
+      this.setState({ play: false });
+    });
+    let funcPlay = () => {
+      if (
+        videos.getBoundingClientRect().top <= 300 &&
+        videos.getBoundingClientRect().top > 0
+      ) {
+        videos.play();
+      } else {
+        videos.pause();
+      }
+    };
+    funcPlay();
+  }
   playPause = () => {
     if (this.Vid.current!.paused || this.Vid.current!.ended) {
       this.Vid.current!.play();
@@ -24,17 +45,19 @@ class VidSmall extends React.Component<any> {
   };
   muteUnmute = () => {
     if (this.Vid.current!.muted) {
-      this.Vid.current!.volume = 1;
+      this.Vid.current!.muted = false;
+      this.setState({ mute: false });
     } else {
-      this.Vid.current!.volume = 0;
+      this.setState({ mute: true });
+      this.Vid.current!.muted = true;
     }
   };
   render() {
     return (
       <div className="video_container">
         <video
+          className={this.state.play ? "playing" : ""}
           src={this.props.src}
-          loop
           ref={this.Vid}
           preload="auto"
           poster={this.props.poster}

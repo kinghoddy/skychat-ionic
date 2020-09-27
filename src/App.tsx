@@ -48,12 +48,12 @@ class App extends React.Component<any> {
       <IonApp>
         <IonReactRouter>
           <IonRouterOutlet>
-            <Route path="/signup" component={Signup} />
             <Route path="/login" component={Login} />
+            <Route path="/signup" component={Signup} />
             <Route path="/feed" component={Profile} />
             <Route path="/home" component={Home} />
             <Redirect from="/undefined" to="/" />
-            <Route path="/:uid" component={Profile} />
+            {/* <Route path="/:uid" component={Profile} /> */}
             <Route
               path="/"
               exact

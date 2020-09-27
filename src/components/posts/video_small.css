@@ -13,3 +13,12 @@
 .video_container .controls ion-icon {
   color: white;
 }
+.video_container video {
+  max-height: 70vh;
+  width: 100%;
+  object-fit: cover;
+  background: black;
+}
+.video_container video.playing {
+  object-fit: contain;
+}

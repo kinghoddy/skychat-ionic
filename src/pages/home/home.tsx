@@ -5,16 +5,11 @@ import {
   IonSlide,
   IonSlides,
   IonButton,
-  IonAvatar,
-  IonText,
 } from "@ionic/react";
 import "./home.css";
-import { StatusBar } from "@ionic-native/status-bar";
 class home extends Component {
   state = {};
-  componentDidMount() {
-    StatusBar.overlaysWebView(true);
-  }
+
   render() {
     const slideOpts = {
       initialSlide: 0,

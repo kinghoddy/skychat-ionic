@@ -13,9 +13,19 @@ import {
   IonContent,
   IonIcon,
   IonAvatar,
+  IonText,
+  IonSpinner,
+  IonToast,
 } from "@ionic/react";
-import { Link, withRouter } from "react-router-dom";
-import { personCircleOutline } from "ionicons/icons";
+import { withRouter, Link } from "react-router-dom";
+import {
+  mailOutline,
+  lockClosedOutline,
+  logInOutline,
+  peopleOutline,
+  closeOutline,
+  checkmarkOutline,
+} from "ionicons/icons";
 import "./auth.css";
 import "firebase/auth";
 import "firebase/database";
@@ -25,18 +35,19 @@ import { GooglePlus } from "@ionic-native/google-plus";
 class SignUp extends Component<any> {
   state = {
     formData: {
-      email: "",
+      fullName: "",
       username: "",
+      email: "",
       password: "",
     },
+    profilePicture: "",
     errorMessage: null,
     sMessage: "Please Wait ! ! !",
     loading: false,
-    userExist: null,
-    name: "",
-    photo: "",
+    setname: false,
+    nameLoading: false,
+    usernameExists: false,
     shouldLogin: false,
-    toast: "",
   };
   googleLogin = () => {
     this.setState({ errorMessage: null, loading: true });
@@ -51,8 +62,40 @@ class SignUp extends Component<any> {
           .auth()
           .signInAndRetrieveDataWithCredential(token)
           .then((result) => {
-            var user = result.user;
-            this.saveUser(user);
+            var user = result.user!;
+            var id = result.user!.uid;
+            firebase
+              .database()
+              .ref("users")
+              .once("value", (s) => {
+                if (s.val()[id]) {
+                  this.setState({
+                    loading: false,
+                    userExist: true,
+                    errorMessage: (
+                      <div>
+                        <img
+                          src={s.val()[id].profilePicture}
+                          style={{ height: "50px", width: "50px" }}
+                          className="rounded-circle"
+                          alt=""
+                        />
+                        User {s.val()[id].username} already exists. You can
+                        <Link to="/feed">
+                          <a> Login </a>
+                        </Link>
+                        to continue
+                      </div>
+                    ),
+                  });
+                } else {
+                  this.setState({ loading: false });
+                  this.setState({
+                    setname: true,
+                    profilePicture: user.photoURL,
+                  });
+                }
+              });
           })
           .catch((error) => {
             var errorMessage = error.message;
@@ -68,49 +111,43 @@ class SignUp extends Component<any> {
       });
   };
 
-  fetchUser = (user: any) => {
-    var uid;
-    if (user != null) {
-      uid = user.uid;
-      this.setState({ loading: false, errorMessage: null, shouldLogin: true });
-    } else {
-      var errorMessage = <strong>Failed</strong>;
-      this.setState({ loading: false, errorMessage: errorMessage });
-    }
-    if (this.state.shouldLogin) {
-      var search = this.props.location.search;
-      if (search) {
-        this.props.history.push("/" + search.substr(1));
-      } else {
-        this.props.history.push("/feed");
-      }
-    }
-  };
-
-  saveUser = (user: any) => {
-    var ref = firebase.database().ref("users/");
-    ref.once("value", (s) => {
-      const id = user.uid;
-      if (s.val()[id]) {
-        this.setState({
-          loading: false,
-          userExist: user,
-          photo: s.val()[id].profilePicture,
-          name: s.val()[id].username,
-        });
-      } else {
-        this.setState({ loading: true, sMessage: "Completing Signup  !" });
+  saveUser = (e: any) => {
+    e.preventDefault();
+    // this.setUserName(this.state.formData.username);
+    this.setState({ errorMessage: null });
+    if (
+      !this.state.usernameExists &&
+      !this.state.nameLoading &&
+      this.state.formData.username &&
+      this.state.formData.fullName
+    ) {
+      this.setState({ loading: true, sMessage: "Completing Signup  !" });
+      const user = firebase.auth().currentUser!;
+      user.updateProfile({
+        displayName: this.state.formData.username,
+      });
+      var ref = firebase.database().ref("users/");
+      ref.once("value", (s) => {
+        const id = user.uid;
         ref
           .child(id)
-          .set({
-            username: user.displayName.toLowerCase(),
-            coverPhoto:
-              "https://sky-chat.netlify.app/static/media/avatar_square.8361f480.png",
+          .update({
+            username: this.state.formData.username,
             profilePicture: user.photoURL,
+            coverPhoto: "/img/avatar-square.png",
+            fullName: this.state.formData.fullName.toLowerCase(),
           })
           .then(() => {
-            this.setState({ loading: false, errorMessage: null });
-            this.props.history.push(id);
+            localStorage.removeItem("skychatUserData");
+            localStorage.removeItem("skychatFeed");
+            var search = this.props.location.search;
+            setTimeout(() => {
+              if (search) {
+                this.props.history.push("/" + search.substr(1));
+              } else {
+                this.props.history.push("/feed");
+              }
+            }, 2000);
           })
           .catch(() => {
             this.setState({
@@ -118,81 +155,77 @@ class SignUp extends Component<any> {
               errorMessage: "Failed to save user to database",
             });
           });
-      }
-    });
+      });
+    }
+    if (this.state.usernameExists) {
+      this.setState({ errorMessage: "Username Exists. Pick another" });
+    }
   };
-
+  setUsername = () => {
+    let userExists;
+    this.setState({ nameLoading: true });
+    var ref = firebase.database().ref("users/");
+    setTimeout(() => {
+      ref
+        .orderByChild("username")
+        .equalTo(this.state.formData.username)
+        .once("value", (s) => {
+          if (s.val()) userExists = true;
+          else userExists = false;
+          this.setState({ usernameExists: userExists, nameLoading: false });
+        });
+    }, 1000);
+  };
   signUpHandler = (event: any) => {
     event.preventDefault();
-    this.setState({ loading: true, sMessage: "Checking info" });
-    const formData = { ...this.state.formData };
-    console.log(formData);
-    var ref = firebase.database().ref("users");
-    ref.once("value", (s) => {
-      var usernameExist = false;
-      for (let keys in s.val()) {
-        if (
-          formData.username.toLowerCase() ===
-          s.val()[keys].username.toLowerCase()
-        ) {
-          usernameExist = true;
-          console.log(s.val()[keys].username);
-        }
-      }
-      if (usernameExist) {
-        this.setState({
-          errorMessage: (
-            <span>
-              Username <strong>{formData.username}</strong> Exists. Please{" "}
-              <strong>Pick another username</strong>
-            </span>
-          ),
-          loading: false,
-        });
-      } else {
-        firebase
-          .auth()
-          .createUserWithEmailAndPassword(formData.email, formData.password)
-          .then((res) => {
-            var user = firebase.auth().currentUser!;
-            this.setState({ sMessage: "Please wait" });
-            user
-              .updateProfile({
-                displayName: formData.username.toLowerCase(),
-                photoURL:
-                  "https://sky-chat.netlify.app/static/media/avatar-red.6399edc5.png",
-              })
-              .then(() => {
-                this.saveUser(user);
-              })
-              .catch((error) => {
-                // An error happened.
-                const errorMessage = "Failed to Authenticate";
-                this.setState({ loading: false, errorMessage: errorMessage });
-              });
-          })
-          .catch((error) => {
-            // Handle Errors here.
-            var errorMessage = error.message;
-            this.setState({ loading: false, errorMessage: errorMessage });
-            // ...
-          });
-      }
+    this.setState({
+      loading: true,
+      sMessage: "Checking info",
+      errorMessage: null,
     });
+    const formData = { ...this.state.formData };
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(formData.email, formData.password)
+      .then((res) => {
+        var user = firebase.auth().currentUser!;
+        this.setState({ sMessage: "Please wait" });
+        user
+          .updateProfile({
+            photoURL: "/assets/avatar.png",
+          })
+          .then(() => {
+            this.setState({
+              loading: false,
+              setname: true,
+              profilePicture: user.photoURL,
+            });
+            this.setUsername();
+          });
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        var errorMessage = error.message;
+        this.setState({ loading: false, errorMessage: errorMessage });
+        // ...
+      });
   };
-  componentDidMount() {}
 
-  inputChanged = (e: any, id: "email" | "username" | "password") => {
+  inputChanged = (
+    e: any,
+    id: "email" | "username" | "password" | "fullName"
+  ) => {
     const updatedForm = {
       ...this.state.formData,
     };
     updatedForm[id] = e!.target!.value;
+    if (id === "username") updatedForm[id] = sanitize(e.target.value);
     this.setState({ formData: updatedForm });
   };
   render() {
     return (
-      <IonPage>
-        <IonToolbar mode="ios">
+      <IonPage className="bg">
+        <IonToolbar color="none">
           <IonButtons slot="start">
             <IonBackButton defaultHref="/home" />
           </IonButtons>
@@ -203,58 +236,96 @@ class SignUp extends Component<any> {
             <IonLoading
               isOpen={this.state.loading}
               mode="ios"
+              backdropDismiss={false}
               message={this.state.sMessage}
             />
-            <IonIcon
-              className="animate__rollIn wow"
-              style={{ fontSize: "64px" }}
-              icon={personCircleOutline}
-            />
 
-            {this.state.userExist ? (
+            <h4 className="headText">Join Skychat Today</h4>
+            {this.state.setname ? (
               <div className="ion-text-center">
-                <IonAvatar slot="start">
-                  <img src={this.state.photo} alt="" />
+                <IonAvatar style={{ margin: "auto" }}>
+                  <img
+                    src={this.state.profilePicture}
+                    alt=""
+                    onError={(e: any) => (e.target.src = "/assets/avatar.png")}
+                  />
                 </IonAvatar>
-                <p>
-                  User {this.state.name} already exists
-                  <IonButton
-                    fill="outline"
-                    color="dark"
-                    onClick={() => this.fetchUser(this.state.userExist)}
-                  >
-                    Login as {this.state.name}
-                  </IonButton>
-                  or
-                  <IonButton
-                    fill="outline"
-                    onClick={() => this.setState({ userExists: null })}
-                  >
-                    Sign up with another account
-                  </IonButton>
-                </p>
+                <p>{this.state.formData.email}</p>
+                <h5>Pick a username</h5>
+                <span>It may include '_'. </span> <br />
+                <span>
+                  Do not include '@' , '-' , '/' , '#' , '?' , '[] , {} , ()' ,
+                  '=' or any other non alphabetic character.
+                </span>
+                <form
+                  className="ion-text-center wow animate__fadeInUp"
+                  style={{ width: "100%" }}
+                >
+                  <IonItem className="ion-margin-top">
+                    {this.state.nameLoading ? (
+                      <IonSpinner slot="end" />
+                    ) : (
+                      this.state.formData.username && (
+                        <IonIcon
+                          color="light"
+                          slot="end"
+                          icon={
+                            this.state.usernameExists
+                              ? closeOutline
+                              : checkmarkOutline
+                          }
+                        />
+                      )
+                    )}
+                    <IonIcon color="light" slot="start" icon={peopleOutline} />
+
+                    <IonLabel position="floating">Username</IonLabel>
+                    <IonInput
+                      type="text"
+                      required
+                      value={this.state.formData.username}
+                      onIonChange={(e) => {
+                        this.inputChanged(e, "username");
+                        this.setUsername();
+                      }}
+                    />
+                  </IonItem>
+                  <IonItem className="ion-margin-top">
+                    <IonIcon color="light" slot="start" icon={mailOutline} />
+
+                    <IonLabel position="floating">Full Name</IonLabel>
+                    <IonInput
+                      type="email"
+                      required
+                      value={this.state.formData.fullName}
+                      onIonChange={(e) => this.inputChanged(e, "fullName")}
+                    />
+                  </IonItem>
+                  {!this.state.usernameExists &&
+                    !this.state.nameLoading &&
+                    this.state.formData.username &&
+                    this.state.formData.fullName && (
+                      <IonButton
+                        type="submit"
+                        color="fav"
+                        className="ion-margin-top"
+                        mode="ios"
+                        expand="block"
+                      >
+                        Finish
+                      </IonButton>
+                    )}
+                </form>
               </div>
             ) : (
               <form
                 onSubmit={this.signUpHandler}
                 className="ion-text-center wow animate__fadeInUp"
-                style={{ width: "75%" }}
+                style={{ width: "100%" }}
               >
-                <IonLoading
-                  isOpen={this.state.loading}
-                  backdropDismiss={false}
-                  message={this.state.sMessage}
-                />
-                <IonItem>
-                  <IonLabel position="floating">Username</IonLabel>
-                  <IonInput
-                    type="text"
-                    required
-                    value={this.state.formData.username}
-                    onIonChange={(e) => this.inputChanged(e, "username")}
-                  />
-                </IonItem>
-                <IonItem>
+                <IonItem className="ion-margin-top">
+                  <IonIcon color="light" slot="start" icon={mailOutline} />
+
                   <IonLabel position="floating">Email</IonLabel>
                   <IonInput
                     type="email"
@@ -263,7 +334,13 @@ class SignUp extends Component<any> {
                     onIonChange={(e) => this.inputChanged(e, "email")}
                   />
                 </IonItem>
-                <IonItem>
+                <IonItem className="ion-margin-top">
+                  <IonIcon
+                    color="light"
+                    slot="start"
+                    icon={lockClosedOutline}
+                  />
+
                   <IonLabel position="floating">Password</IonLabel>
                   <IonInput
                     type="password"
@@ -274,32 +351,45 @@ class SignUp extends Component<any> {
                 </IonItem>
                 <IonButton
                   type="submit"
-                  color="dark"
+                  color="fav"
                   className="ion-margin-top"
+                  mode="ios"
                   expand="block"
                 >
-                  Signup
+                  Next
                 </IonButton>
                 <IonButton
                   onClick={this.googleLogin}
                   className="ion-margin-top"
+                  fill="outline"
+                  mode="ios"
+                  color="light"
                   expand="block"
                 >
                   <img
-                    slot="start"
                     alt=""
                     src="/assets/google.png"
-                    style={{ height: "90%", marginRight: "10px" }}
+                    style={{ height: "30px" }}
                   />
-                  Continue with Google
+                  <IonText style={{ margin: "auto" }}>
+                    Continue with Google
+                  </IonText>
                 </IonButton>
-                <p className="ion-margin-vertical">Already have an account ?</p>
-                <Link to={"/login"}>Login</Link>
-                {this.state.errorMessage && (
-                  <p className="error">{this.state.errorMessage}</p>
-                )}
+                <p className="ion-margin-vertical text-light">
+                  Already have an account ?
+                </p>
+                <IonButton routerLink="/login">
+                  <IonIcon icon={logInOutline} slot="start" />
+                  Login
+                </IonButton>
               </form>
             )}
+            <IonToast
+              isOpen={this.state.errorMessage ? true : false}
+              onDidDismiss={() => this.setState({ errorMessage: null })}
+              message={this.state.errorMessage || ""}
+              buttons={["cancel"]}
+            />
             <img
               className="logo animate__fadeInUp wow animate__delay-2s"
               alt=""
@@ -311,5 +401,12 @@ class SignUp extends Component<any> {
     );
   }
 }
+const sanitize = (text = "") => {
+  let sanitizedText = text
+    .replace(/[-[\]{}();:'"@=<>*+?.,\\^$|#\s]/g, "")
+    .trim()
+    .toLowerCase();
+  return sanitizedText;
+};
 
 export default withRouter(SignUp);

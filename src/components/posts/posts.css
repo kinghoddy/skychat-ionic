@@ -19,8 +19,7 @@ body.dark .post {
   min-height: 130px;
 }
 
-.post_media ion-img::part(image),
-.post_media video {
+.post_media ion-img::part(image) {
   border: 0;
   max-height: 60vh;
   display: block;
@@ -29,14 +28,7 @@ body.dark .post {
   object-fit: cover;
 }
 
-.post_media video {
-  object-fit: cover;
-  background: black;
-}
-.post_media .playing {
-  object-fit: contain;
-}
-.text-medium {
+. .text-medium {
   color: var(--ion-color-medium);
   font-weight: light;
 }

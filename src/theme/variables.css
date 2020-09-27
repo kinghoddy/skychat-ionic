@@ -3,6 +3,16 @@ http://ionicframework.com/docs/theming/ */
 
 /** Ionic CSS Variables **/
 :root {
+}
+
+:root {
+  --ion-color-fav: linear-gradient(to right, #f31, #f71);
+  --ion-color-fav-rgb: 255, 68, 17;
+  --ion-color-fav-contrast: #ffffff;
+  --ion-color-fav-contrast-rgb: 255, 255, 255;
+  --ion-color-fav-shade: #e03c0f;
+  --ion-color-fav-tint: #ff5729;
+
   /** primary **/
   --ion-color-primary: #3880ff;
   --ion-color-primary-rgb: 56, 128, 255;
@@ -356,4 +366,12 @@ body.dark {
   --ion-toolbar-background: #1f1f1f;
 
   --ion-tab-bar-background: #1f1f1f;
+}
+.ion-color-fav {
+  --ion-color-base: var(--ion-color-fav);
+  --ion-color-base-rgb: var(--ion-color-fav-rgb);
+  --ion-color-contrast: var(--ion-color-fav-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-fav-contrast-rgb);
+  --ion-color-shade: var(--ion-color-fav-shade);
+  --ion-color-tint: var(--ion-color-fav-tint);
 }

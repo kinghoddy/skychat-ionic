@@ -27,6 +27,7 @@ const Auth: React.FC = () => {
     <IonRouterOutlet>
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
+
       {/* {currentUser && (
         <IonItem className="ion-margin-vertical">
           <IonAvatar>

@@ -5,26 +5,7 @@ import { StatusBar } from '@ionic-native/status-bar'
 const ref = firebase.database().ref('/');
 const body = document.body
 
-const DM = () => {
-    StatusBar.overlaysWebView(false);
 
-
-    let theme = localStorage.getItem("skychatTheme");
-    if (!theme) {
-        localStorage.setItem("skychatTheme", "light");
-        theme = "light";
-    }
-    if (theme === "dark") {
-        body.classList.add("dark");
-        StatusBar.backgroundColorByHexString('#111');
-        StatusBar.styleBlackOpaque();
-    } else {
-        StatusBar.backgroundColorByHexString('#ffffff');
-        StatusBar.styleDefault()
-        body.classList.remove("dark");
-
-    }
-};
 
 const cleanUp = () => {
     ref.child('users/').once('value', s => {
@@ -67,7 +48,6 @@ const Update = () => {
 
 
 (function init() {
-    DM()
     // cleanUp();
     Update()
 })()
@@ -83,4 +63,3 @@ function presentAlert(header, message, buttonss) {
     return alert.present();
 }
 
-export { DM }

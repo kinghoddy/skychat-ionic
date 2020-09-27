@@ -22,7 +22,6 @@ import "firebase/auth";
 import "firebase/database";
 import firebase from "../../firebaseConfig";
 import { GooglePlus } from "@ionic-native/google-plus";
-import { DM } from '../../main';
 class Login extends Component<any> {
   state = {
     formData: {
@@ -158,7 +157,6 @@ class Login extends Component<any> {
   };
 
   componentDidMount() {
-    DM()
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.setState({
@@ -181,8 +179,8 @@ class Login extends Component<any> {
   };
   render() {
     return (
-      <IonPage>
-        <IonToolbar mode="ios">
+      <IonPage className="bg">
+        <IonToolbar color="none">
           <IonButtons slot="start">
             <IonBackButton defaultHref="/home" />
           </IonButtons>
