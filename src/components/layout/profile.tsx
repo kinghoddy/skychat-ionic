@@ -15,6 +15,7 @@ import Feed from "../../pages/feed/feed";
 import firebase from "../../firebaseConfig";
 import "firebase/auth";
 import "firebase/database";
+import { StatusBar } from "@ionic-native/status-bar";
 
 class Profile extends React.Component<any> {
   state = {
@@ -27,6 +28,7 @@ class Profile extends React.Component<any> {
   };
   componentDidMount() {
     this.loadUserData();
+    StatusBar.backgroundColorByHexString("#fff");
   }
   loadUserData = () => {
     this.setState({ loading: true });

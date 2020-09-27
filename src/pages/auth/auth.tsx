@@ -1,13 +1,15 @@
 import React from "react";
-import { IonRouterOutlet, IonItem, IonLabel, IonAvatar } from "@ionic/react";
+import { IonRouterOutlet } from "@ionic/react";
 import "./auth.css";
 import Login from "./login";
 import Signup from "./signup";
 import { Route } from "react-router";
 import firebase from "../../firebaseConfig";
 import "firebase/auth";
+import { StatusBar } from "@ionic-native/status-bar";
 
 const Auth: React.FC = () => {
+  StatusBar.backgroundColorByHexString("#f43");
   const [currentUser, setCurrentUser] = React.useState(false);
   const [userData, setUserData] = React.useState<any>({});
   React.useEffect(() => {

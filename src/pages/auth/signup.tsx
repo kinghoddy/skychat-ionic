@@ -295,7 +295,7 @@ class SignUp extends Component<any> {
 
                     <IonLabel position="floating">Full Name</IonLabel>
                     <IonInput
-                      type="email"
+                      type="text"
                       required
                       value={this.state.formData.fullName}
                       onIonChange={(e) => this.inputChanged(e, "fullName")}

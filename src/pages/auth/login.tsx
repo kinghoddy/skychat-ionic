@@ -13,10 +13,17 @@ import {
   IonPage,
   IonContent,
   IonIcon,
-  IonRouterLink,
+  IonText,
+  IonToast,
 } from "@ionic/react";
-import { withRouter } from "react-router-dom";
-import { personCircleOutline } from "ionicons/icons";
+import { Link, withRouter } from "react-router-dom";
+import {
+  lockClosedOutline,
+  logIn,
+  logOutOutline,
+  mailOutline,
+  personCircleOutline,
+} from "ionicons/icons";
 import "./auth.css";
 import "firebase/auth";
 import "firebase/database";
@@ -52,14 +59,28 @@ class Login extends Component<any> {
         let token = firebase.auth.GoogleAuthProvider.credential(res.idToken);
         firebase
           .auth()
-          .signInAndRetrieveDataWithCredential(token)
+          .signInWithCredential(token)
           .then((result) => {
             var user = result.user;
+
             if (result!.additionalUserInfo!.isNewUser === true) {
-              this.setState({
-                sMessage: "Finish setting up your skymail account",
-              });
-              this.saveUser(user);
+              firebase
+                .auth()
+                .currentUser!.delete()
+                .then(() => {
+                  this.setState({
+                    loading: false,
+                    error: (
+                      <span>
+                        "This Google account is not attached to any skychat
+                        account.
+                        <Link to="/signup">
+                          <a>Create an account instead</a>
+                        </Link>
+                      </span>
+                    ),
+                  });
+                });
             } else {
               this.fetchUser(user);
             }
@@ -82,7 +103,7 @@ class Login extends Component<any> {
           "15": "Connection timeout",
         };
         if (!errors[err]) {
-          errors[err] = "Unknown error";
+          errors[err] = "Can't access google at the moment";
         }
         console.error(err);
 
@@ -92,47 +113,20 @@ class Login extends Component<any> {
 
   fetchUser = (user: any) => {
     this.setState({ sMessage: "Logging in.." });
-    var uid;
     if (user != null) {
-      uid = user.uid;
-      this.setState({ loading: false, errorMessage: null, shouldLogin: true });
-    } else {
-      var errorMessage = <strong>Failed</strong>;
-      this.setState({ loading: false, errorMessage: errorMessage });
-    }
-    if (this.state.shouldLogin) {
+      this.setState({ loading: false, errorMessage: null });
+      localStorage.removeItem("skychatUserData");
+      localStorage.removeItem("skychatFeed");
       var search = this.props.location.search;
       if (search) {
         this.props.history.push("/" + search.substr(1));
       } else {
         this.props.history.push("/feed");
       }
+    } else {
+      var errorMessage = <strong>Failed</strong>;
+      this.setState({ loading: false, errorMessage: errorMessage });
     }
-  };
-
-  saveUser = (user: any) => {
-    var ref = firebase.database().ref("users/");
-    const id = user.uid;
-
-    this.setState({ loading: true, sMessage: "Completing Signup  !" });
-    ref
-      .child(id)
-      .set({
-        username: user.displayName.toLowerCase(),
-        coverPhoto: "assets/avatar_red.png",
-        profilePicture: user.photoURL,
-      })
-      .then(() => {
-        this.setState({ loading: false, errorMessage: null });
-        console.log("success");
-        this.props.history.push(id);
-      })
-      .catch(() => {
-        this.setState({
-          loading: false,
-          errorMessage: "Failed to save user to database",
-        });
-      });
   };
 
   signInHandler = (event: any) => {
@@ -181,10 +175,10 @@ class Login extends Component<any> {
     return (
       <IonPage className="bg">
         <IonToolbar color="none">
-          <IonButtons slot="start">
+          <IonButtons slot="start" color="light">
             <IonBackButton defaultHref="/home" />
           </IonButtons>
-          <IonTitle>Login</IonTitle>
+          <IonTitle color="light">Login</IonTitle>
         </IonToolbar>
         <IonContent>
           <div className="wrapper">
@@ -193,62 +187,6 @@ class Login extends Component<any> {
               style={{ fontSize: "64px" }}
               icon={personCircleOutline}
             />
-
-            <form
-              className="ion-text-center wow animate__fadeInUp"
-              onSubmit={this.signInHandler}
-              style={{ width: "90%" }}
-            >
-              <IonLoading
-                isOpen={this.state.loading}
-                backdropDismiss={false}
-                message={this.state.sMessage}
-              />
-              <IonItem>
-                <IonLabel position="floating">Email</IonLabel>
-                <IonInput
-                  type="email"
-                  value={this.state.formData.email}
-                  onIonChange={(e) => this.inputChanged(e, "email")}
-                />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="floating">Password</IonLabel>
-                <IonInput
-                  type="password"
-                  value={this.state.formData.password}
-                  onIonChange={(e) => this.inputChanged(e, "password")}
-                />
-              </IonItem>
-              <IonButton
-                type="submit"
-                color="medium"
-                className="ion-margin-top"
-                expand="block"
-              >
-                Login
-              </IonButton>
-              <IonButton
-                onClick={this.googleLogin}
-                className="ion-margin-top"
-                expand="block"
-              >
-                <img
-                  slot="start"
-                  alt=""
-                  src="/assets/google.png"
-                  style={{ height: "90%", marginRight: "10px" }}
-                />
-                Continue with Google
-              </IonButton>
-              <p className="ion-margin-vertical">Or</p>
-              <IonRouterLink routerLink="/signup">
-                Create new account
-              </IonRouterLink>
-              {this.state.errorMessage && (
-                <p className="error">{this.state.errorMessage}</p>
-              )}
-            </form>
             {this.state.userData.uid && (
               <IonItem
                 mode="ios"
@@ -257,19 +195,94 @@ class Login extends Component<any> {
                 routerLink="/feed"
               >
                 <IonAvatar slot="start">
-                  <img alt="" src={this.state.userData.profilePicture} />
+                  <img
+                    alt=""
+                    src={this.state.userData.profilePicture}
+                    onError={(e: any) => (e.target.src = "/assets/avatar.png")}
+                  />
                 </IonAvatar>
                 <IonLabel>
                   <h2> Continue as {this.state.userData.username}</h2>
                 </IonLabel>
               </IonItem>
             )}
+
+            <form
+              className="ion-text-center wow animate__fadeInUp"
+              onSubmit={this.signInHandler}
+              style={{ width: "100%" }}
+            >
+              <IonLoading
+                isOpen={this.state.loading}
+                backdropDismiss={false}
+                message={this.state.sMessage}
+              />
+              <IonItem className="ion-margin-top">
+                <IonIcon color="light" slot="start" icon={mailOutline} />
+                <IonLabel position="floating">Email</IonLabel>
+                <IonInput
+                  type="email"
+                  value={this.state.formData.email}
+                  onIonChange={(e) => this.inputChanged(e, "email")}
+                />
+              </IonItem>
+              <IonItem className="ion-margin-top">
+                <IonIcon color="light" slot="start" icon={lockClosedOutline} />
+
+                <IonLabel position="floating">Full Name</IonLabel>
+                <IonInput
+                  type="password"
+                  required
+                  value={this.state.formData.password}
+                  onIonChange={(e) => this.inputChanged(e, "password")}
+                />
+              </IonItem>
+              <IonButton
+                type="submit"
+                mode="ios"
+                color="fav"
+                className="ion-margin-top"
+                expand="block"
+              >
+                <IonIcon icon={logIn} />
+                <IonText style={{ margin: "auto" }}>Login</IonText>
+              </IonButton>
+              <p className="ion-margin-vertical">Or</p>
+              <IonButton
+                onClick={this.googleLogin}
+                className="ion-margin-top"
+                expand="block"
+                fill="outline"
+                color="light"
+                mode="ios"
+              >
+                <img
+                  alt=""
+                  src="/assets/google.png"
+                  style={{ height: "30px" }}
+                />
+                <IonText style={{ margin: "auto" }}>
+                  Continue with google
+                </IonText>
+              </IonButton>
+              <IonButton className="ion-margin-top" routerLink="/signup">
+                <IonIcon icon={logOutOutline} slot="start" />
+                Create new account
+              </IonButton>
+            </form>
+
             <img
               className="logo animate__fadeInUp wow animate__delay-2s"
               alt=""
               src="/assets/logo/skychat_red.png"
             />
           </div>
+          <IonToast
+            isOpen={this.state.errorMessage ? true : false}
+            onDidDismiss={() => this.setState({ errorMessage: null })}
+            message={this.state.errorMessage || ""}
+            buttons={["cancel"]}
+          />
         </IonContent>
       </IonPage>
     );

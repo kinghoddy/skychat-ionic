@@ -22,9 +22,13 @@ export default timestamp => {
     var hour = now.getHours();
     var min = dec(now.getMinutes());
     var clock = " am";
-    if (hour > 12) {
+    if (hour > 11) {
         clock = " pm";
+    }
+    if (hour > 12) {
         hour -= 12
+    } else if (hour === 0) {
+        hour = 12
     }
     function dec(num) {
         if (num < 10) return "0" + num;
@@ -38,12 +42,12 @@ export default timestamp => {
         date = "Yesterday at " + hour + ":" + min + clock;
     } else if (
         current.getDate() - monthDay > 1 &&
-        current.getDate() - monthDay < 7
+        current.getDate() - monthDay < 7 && month === current.getMonth()
     ) {
         date = week + " at " + hour + ":" + min + clock;
     } else if (year === current.getFullYear()) {
         date =
-            month + " " + monthDay + " at " + monthDay + " " + hour + ":" + min + clock;
+            month + " " + monthDay + " at " + hour + ":" + min + clock;
     } else if (year > current.getFullYear()) {
         date =
             month +

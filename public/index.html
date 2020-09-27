@@ -1,51 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <style>
+      .wow {
+        visibility: hidden;
+      }
+    </style>
+    <meta charset="utf-8" />
+    <title>skychat</title>
 
-<head>
-  <style>
-    .wow {
-      visibility: hidden;
-    }
-  </style>
-  <meta charset="utf-8" />
-  <title>skychat</title>
+    <base href="/" />
 
-  <base href="/" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="viewport"
+      content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
 
-  <meta name="color-scheme" content="light dark" />
-  <meta name="viewport"
-    content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="format-detection" content="telephone=no" />
-  <meta name="msapplication-tap-highlight" content="no" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
-  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="%PUBLIC_URL%/assets/icon/icon.png"
+    />
 
-  <link rel="shortcut icon" type="image/png" href="%PUBLIC_URL%/assets/icon/icon.png" />
+    <!-- add to homescreen for ios -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Skychat " />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
-  <!-- add to homescreen for ios -->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Skychat " />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <!-- additionals -->
+    <link
+      rel="stylesheet"
+      href="%PUBLIC_URL%/assets/vendor/css/animate.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="%PUBLIC_URL%/assets/vendor/fontawesome/css/fontawesome.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="%PUBLIC_URL%/assets/vendor/fontawesome/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Architects+Daughter|Gochi+Hand|Montserrat+Alternates:200,300,400,500,700,800|Source+Sans+Pro&display=swap"
+      rel="stylesheet"
+    />
+    <script src="%PUBLIC_URL%/assets/vendor/js/jquery.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/js/bootstrap.min.js"></script>
 
-  <!-- additionals -->
-  <link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/css/animate.min.css">
-  <Link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/fontawesome/css/fontawesome.min.css" />
-  <Link rel="stylesheet" href="%PUBLIC_URL%/assets/vendor/fontawesome/css/all.min.css" />
-  <link
-    href="https://fonts.googleapis.com/css?family=Architects+Daughter|Gochi+Hand|Montserrat+Alternates:200,300,400,500,700,800|Source+Sans+Pro&display=swap"
-    rel="stylesheet">
-  <script src="%PUBLIC_URL%/assets/vendor/js/jquery.js"></script>
-  <script src="%PUBLIC_URL%/assets/vendor/js/bootstrap.min.js"></script>
+    <script src="%PUBLIC_URL%/assets/vendor/js/wow.min.js"></script>
+    <script>
+      new WOW().init();
+    </script>
+  </head>
 
-  <script src="%PUBLIC_URL%/assets/vendor/js/wow.min.js"></script>
-  <script>
-    new WOW().init()
-  </script>
-
-</head>
-
-<body>
-  <div id="root"></div>
-</body>
-
+  <body>
+    <div id="root"></div>
+  </body>
 </html>

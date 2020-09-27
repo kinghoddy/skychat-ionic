@@ -7,8 +7,12 @@ import {
   IonButton,
 } from "@ionic/react";
 import "./home.css";
+import { StatusBar } from "@ionic-native/status-bar";
 class home extends Component {
   state = {};
+  componentDidMount() {
+    StatusBar.backgroundColorByHexString("#000");
+  }
 
   render() {
     const slideOpts = {

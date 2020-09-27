@@ -1,7 +1,5 @@
-import { Plugins } from '@capacitor/core';
 import firebase from './firebaseConfig';
 import 'firebase/database'
-import { StatusBar } from '@ionic-native/status-bar'
 const ref = firebase.database().ref('/');
 const body = document.body
 
